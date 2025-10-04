@@ -1,0 +1,14 @@
+{
+  "defaults": {
+    "days": 14,
+    "per_page": 50,
+    "max_pages": 2,
+    "country": "us",
+    "sleep": 0.4
+  },
+  "tabs": {
+    "terraform": "terraform",
+    "appsec": "application security appsec code scanning static analysis threat modeling",
+    "cloudsec": "cloud security aws gcp azure iam"
+  }
+}
