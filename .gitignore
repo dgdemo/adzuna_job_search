@@ -5,3 +5,4 @@ venv/
 .vscode/
 .idea/
 gcp_svc.json
+*.jar
