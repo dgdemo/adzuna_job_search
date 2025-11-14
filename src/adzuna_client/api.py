@@ -24,6 +24,7 @@ def fetch_jobs(
     results_per_page: int = 50,
     max_pages: int = 1,
     sleep_secs: float = 0.4,
+    remote_only: bool = True,   # <-- add this
 ) -> Generator[Dict, None, None]:
     _check_creds()
     session = requests.Session()
@@ -36,6 +37,7 @@ def fetch_jobs(
             "results_per_page": results_per_page,
             "content-type": "application/json",
             "max_days_old": days,
+            "remote_only": 1,
         }
         url = f"{BASE_URL}/{country}/search/{page}?{urlencode(params)}"
         print(f"[adzuna] GET {url}")  # DEBUG
