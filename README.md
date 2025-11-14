@@ -6,13 +6,15 @@
 
 This project uses the **Adzuna Job Search API** to fetch real job listings and expose them via a simple **FastAPI** backend.  
 
-The goal is to build a small but realistic “job market intelligence” service that you can later extend with a React UI, Terraform-based infrastructure, and DevSecOps tooling (scanning, CI/CD, etc.).
+The goal is to build a small but realistic “job market intelligence” service that will later be extended with a React UI, Terraform-based infrastructure, and DevSecOps tooling (scanning, CI/CD, etc.).
 
 Right now, the focus is on:
 
 - Clean, well-structured **Python backend** code.
 - Clear **API integration** with Adzuna.
-- A roadmap that tells a convincing **DevSecOps story** for hiring managers.
+- A roadmap that emphasizes real-world DevSecOps practices such as CI/CD pipelines, Terraform infrastructure, containerization, and security tooling.
+- The roadmap is intentionally iterative. Security controls (SAST, scanning, secret detection, infrastructure checks) will be introduced as each stage of the project evolves, mirroring real-world DevSecOps adoption patterns.
+
 
 ---
 
@@ -59,16 +61,28 @@ Right now, the focus is on:
 - [ ] Search form and results table (filter, sort, pagination).
 - [ ] Basic charts (e.g., salary distribution, top titles).
 
-### Long-Term (DevSecOps / Cloud)
+### Long-Term (DevSecOps, Security, and Cloud)
 
-- [ ] Dockerize the backend.
-- [ ] Deploy to AWS (e.g., ECS or EC2) using Terraform.
-- [ ] GitHub Actions CI/CD:
-  - Run tests & linting on PRs.
-  - Build & push Docker image.
-  - SAST with CodeQL.
-  - Container scanning with Trivy.
-- [ ] Add GitLeaks and a simple secrets policy / pre-commit config.
+These enhancements will be added iteratively as the project evolves:
+
+#### 🔐 Security (the “Sec” in DevSecOps)
+- [ ] Add **Bandit** and **pip-audit** to CI for Python security and dependency vulnerability checks.
+- [ ] Add **GitLeaks** to prevent accidental commit of secrets.
+- [ ] Enable **CodeQL** for SAST on the backend.
+- [ ] Harden Docker images (non-root user, slim base image, minimal surface area).
+- [ ] Add rate-limiting and basic request throttling to protect the public API.
+
+#### 🚀 Containers & Deployment
+- [ ] Dockerize the FastAPI backend.
+- [ ] Add container scanning using **Trivy**.
+- [ ] Deploy the service to AWS (ECS or EC2) using Terraform.
+- [ ] Store secrets securely using AWS SSM Parameter Store or Secrets Manager.
+
+#### 🛠️ Infrastructure-as-Code
+- [ ] Terraform modules for networking, compute, storage, and IAM.
+- [ ] Integrate **tfsec** or **Trivy IaC** scans to ensure Terraform follows security best practices.
+- [ ] CI/CD pipeline triggers to apply Terraform changes safely (plan → manual approval → apply).
+
 
 ---
 
