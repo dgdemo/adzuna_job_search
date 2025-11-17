@@ -1,4 +1,6 @@
-import os, time, requests
+import os
+import time
+import requests
 from typing import Dict, Generator
 from urllib.parse import urlencode
 from dotenv import load_dotenv
@@ -10,11 +12,14 @@ ADZUNA_APP_ID = os.getenv("ADZUNA_APP_ID")
 ADZUNA_APP_KEY = os.getenv("ADZUNA_APP_KEY")
 BASE_URL = "https://api.adzuna.com/v1/api/jobs"
 
+
 class AdzunaError(Exception): ...
+
 
 def _check_creds():
     if not ADZUNA_APP_ID or not ADZUNA_APP_KEY:
         raise AdzunaError("Missing ADZUNA_APP_ID or ADZUNA_APP_KEY in .env")
+
 
 def fetch_jobs(
     country: str = "us",
@@ -24,7 +29,7 @@ def fetch_jobs(
     results_per_page: int = 50,
     max_pages: int = 1,
     sleep_secs: float = 0.4,
-    remote_only: bool = True,   # <-- add this
+    remote_only: bool = True,  # <-- add this
 ) -> Generator[Dict, None, None]:
     _check_creds()
     session = requests.Session()

@@ -7,9 +7,7 @@ client = TestClient(app)
 def test_read_root():
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json() == {
-        "message": "Adzuna Job Search API is running"
-    }
+    assert response.json() == {"message": "Adzuna Job Search API is running"}
 
 
 def test_health_endpoint_ok():

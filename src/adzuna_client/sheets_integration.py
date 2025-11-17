@@ -2,6 +2,7 @@
 import os
 from typing import List, Dict, Iterable
 
+
 def _open_sheet():
     import gspread
     from oauth2client.service_account import ServiceAccountCredentials
@@ -9,9 +10,14 @@ def _open_sheet():
     service_json = os.getenv("GSPREAD_SERVICE_ACCOUNT_JSON")
     sheet_name = os.getenv("GSPREAD_SHEET_NAME", "Adzuna Jobs")
     if not service_json:
-        raise RuntimeError("GSPREAD_SERVICE_ACCOUNT_JSON not set. Add it to .env or disable --sheet.")
+        raise RuntimeError(
+            "GSPREAD_SERVICE_ACCOUNT_JSON not set. Add it to .env or disable --sheet."
+        )
 
-    scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/drive"]
+    scope = [
+        "https://spreadsheets.google.com/feeds",
+        "https://www.googleapis.com/auth/drive",
+    ]
     creds = ServiceAccountCredentials.from_json_keyfile_name(service_json, scope)
     client = gspread.authorize(creds)
 
@@ -19,6 +25,7 @@ def _open_sheet():
         return client.open(sheet_name)
     except Exception:
         return client.create(sheet_name)
+
 
 def _ensure_worksheet(sh, title: str):
     try:
@@ -28,20 +35,38 @@ def _ensure_worksheet(sh, title: str):
     except Exception:
         return sh.add_worksheet(title=title, rows="2000", cols="30")
 
+
 def _truncate(text: str, max_len: int = 300) -> str:
     if not text:
         return ""
     return text if len(text) <= max_len else text[: max_len - 1] + "…"
 
+
 def _match_keywords(row: Dict, keywords: Iterable[str]) -> str:
     if not keywords:
         return ""
-    blob = " ".join([str(row.get("title","")), str(row.get("description",""))]).lower()
+    blob = " ".join(
+        [str(row.get("title", "")), str(row.get("description", ""))]
+    ).lower()
     hits = sorted({kw for kw in keywords if kw and kw.lower() in blob})
     return ", ".join(hits)
 
-RAW_HEADERS = ["id","title","company","location","created","redirect_url",
-               "description","salary_min","salary_max","contract_time","category","via"]
+
+RAW_HEADERS = [
+    "id",
+    "title",
+    "company",
+    "location",
+    "created",
+    "redirect_url",
+    "description",
+    "salary_min",
+    "salary_max",
+    "contract_time",
+    "category",
+    "via",
+]
+
 
 def publish_to_google_sheets(
     rows: List[Dict],
@@ -78,21 +103,21 @@ def publish_to_google_sheets(
         row_out = []
         for col in shaped_cols:
             if col == "Title":
-                row_out.append(r.get("title",""))
+                row_out.append(r.get("title", ""))
             elif col == "Company":
-                row_out.append(r.get("company",""))
+                row_out.append(r.get("company", ""))
             elif col == "Location":
-                row_out.append(r.get("location",""))
+                row_out.append(r.get("location", ""))
             elif col == "URL":
-                row_out.append(r.get("redirect_url",""))
+                row_out.append(r.get("redirect_url", ""))
             elif col == "Matched Keywords":
                 row_out.append(_match_keywords(r, keywords))
             elif col == "Description Snippet":
-                row_out.append(_truncate(r.get("description",""), 350))
+                row_out.append(_truncate(r.get("description", ""), 350))
             elif col == "Created":
-                row_out.append(r.get("created",""))
+                row_out.append(r.get("created", ""))
             elif col == "Category":
-                row_out.append(r.get("category",""))
+                row_out.append(r.get("category", ""))
             else:
                 # fall back to raw field by key name if provided
                 row_out.append(r.get(col, ""))

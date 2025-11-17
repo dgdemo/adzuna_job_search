@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class JobListing(BaseModel):
     id: str
     title: str

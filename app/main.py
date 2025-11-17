@@ -19,9 +19,8 @@ def health_check():
     return {
         "status": "ok",
         "service": "adzuna_job_search",
-        "adzuna_configured": bool(
-            settings.adzuna_app_id and settings.adzuna_app_key
-        ),
+        "adzuna_configured": bool(settings.adzuna_app_id and settings.adzuna_app_key),
     }
+
 
 # testing comment

@@ -4,4 +4,3 @@ httpx
 pydantic-settings
 python-dotenv
 pytest
-

@@ -1,1 +1,5 @@
 pytest
+pre-commit
+black
+ruff
+detect-secrets
