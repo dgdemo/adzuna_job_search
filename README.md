@@ -9,12 +9,18 @@ This MVP serves as a foundation for a broader job-market intelligence platform.
 This project currently includes:
 - A simple **FastAPI** backend
 - A `/health` endpoint for uptime checks
-- (In progress) A `/search` endpoint that proxies and normalizes Adzuna job listings
+- A fully implemented `/search` endpoint that proxies the Adzuna Job Search API and returns normalized job listings (with pagination, filtering, and schema validation)
 - Configuration via `.env` using **Pydantic v2** + `pydantic-settings`
 - An HTTP client implemented using **httpx**
 - Basic automated tests using **pytest**
 - Pre-commit DevSecOps tooling (formatting, linting, secret scanning)
 The service is intentionally lightweight and will expand over time with frontend, infrastructure, and deeper DevSecOps integrations.
+---
+### Recent Improvements
+- Completed the `/search` endpoint with pagination support (`page`, `per_page`)
+- Added a dedicated `AdzunaClient` using `httpx`
+- Implemented Pydantic v2 models for normalized responses
+- Added unit tests for client + endpoint behavior using pytest and monkeypatching
 ---
 ## Tech Stack
 - Python 3.11
@@ -75,7 +81,8 @@ pre-commit run --all-files
 ```
 
 ### Roadmap (Short-Term)
-    • Finish /search endpoint (normalized output)
-    • Add typed response models via Pydantic v2
+    • Add more search filters (salary range, category, remote)
+    • Add Docker support for local development + lightweight deployment
+    • Add GitHub Actions CI (linting, tests, secret scanning)
     • Add integration tests with mocked Adzuna API
-    • Optional: Docker & GitHub Actions CI pipeline
+    • Add optional live integration test against real Adzuna API
