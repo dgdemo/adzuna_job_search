@@ -20,7 +20,7 @@ The service is intentionally lightweight and will expand over time with frontend
 - Completed the `/search` endpoint with pagination support (`page`, `per_page`)
 - Added a dedicated `AdzunaClient` using `httpx`
 - Implemented Pydantic v2 models for normalized responses
-- Added unit tests for client + endpoint behavior using pytest and monkeypatching
+- Added unit tests for using pytest
 ---
 ## Tech Stack
 - Python 3.11
