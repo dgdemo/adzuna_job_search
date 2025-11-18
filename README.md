@@ -58,6 +58,10 @@ The server will be available at:
     • http://127.0.0.1:8000/docs
 ```
 
+### Example Search
+http://127.0.0.1:8000/search?q=devsecops&location=Austin,TX&page=1&per_page=20
+
+
 ## Development Tooling
 ### Running tests
 
