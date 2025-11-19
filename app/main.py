@@ -1,4 +1,6 @@
-from fastapi import FastAPI, Depends, Query
+from fastapi import FastAPI, Depends, Query, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 
 from app.adzuna_client import AdzunaClient
 
@@ -16,9 +18,12 @@ def get_adzuna_client() -> AdzunaClient:
     return AdzunaClient()
 
 
-@app.get("/")
-def read_root():
-    return {"message": "Adzuna Job Search API is running"}
+templates = Jinja2Templates(directory="app/templates")
+
+
+@app.get("/", response_class=HTMLResponse)
+async def search_page(request: Request):
+    return templates.TemplateResponse("search.html", {"request": request})
 
 
 @app.get("/health")

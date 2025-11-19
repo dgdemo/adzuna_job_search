@@ -17,10 +17,30 @@ This project currently includes:
 The service is intentionally lightweight and will expand over time with frontend, infrastructure, and deeper DevSecOps integrations.
 ---
 ### Recent Improvements
-- Completed the `/search` endpoint with pagination support (`page`, `per_page`)
-- Added a dedicated `AdzunaClient` using `httpx`
-- Implemented Pydantic v2 models for normalized responses
-- Added unit tests for using pytest
+#### Continuous Integration (CI)
+
+A GitHub Actions workflow now runs on every push and pull request, including:
+
+- **Ruff** lint checks
+- **Pytest** test suite
+- **detect-secrets** baseline scan
+
+This ensures consistent code quality and helps prevent accidental secret commits.
+
+---
+
+#### Simple Frontend UI (Jinja2)
+
+A lightweight HTML interface, rendered via **Jinja2 templates**, was added to provide a simple way to interact with the `/search` endpoint. The UI allows users to:
+
+- Enter keywords and location
+- Control pagination (`page` and `per_page`)
+- View normalized job listings returned by the API
+
+A small JavaScript snippet performs client-side requests and displays results directly on the page.
+
+This offers a clean MVP frontend for exploring Adzuna job data without needing curl or Postman.
+
 ---
 ## Tech Stack
 - Python 3.11
@@ -90,3 +110,12 @@ pre-commit run --all-files
     • Add GitHub Actions CI (linting, tests, secret scanning)
     • Add integration tests with mocked Adzuna API
     • Add optional live integration test against real Adzuna API
+
+## UI Preview
+
+<details>
+  <summary>Click to expand screenshot</summary>
+
+  <img src="assets/ui-preview.png" alt="UI screenshot" width="800">
+
+</details>

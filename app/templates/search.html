@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{{ title or "Adzuna Job Search" }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 1.5rem;
+      background: #f5f5f5;
+    }
+    h1 {
+      margin-bottom: 0.5rem;
+    }
+    .subtitle {
+      color: #555;
+      margin-bottom: 1rem;
+    }
+    form {
+      background: #fff;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+      margin-bottom: 1rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 0.75rem;
+      align-items: end;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      margin-bottom: 0.25rem;
+      color: #333;
+    }
+    input {
+      width: 100%;
+      padding: 0.4rem 0.5rem;
+      border-radius: 0.3rem;
+      border: 1px solid #ccc;
+      font-size: 0.95rem;
+    }
+    button {
+      padding: 0.55rem 1rem;
+      border-radius: 0.4rem;
+      border: none;
+      background: #2563eb;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    button:hover {
+      background: #1d4ed8;
+    }
+    #status {
+      margin-bottom: 0.75rem;
+      font-size: 0.9rem;
+      color: #444;
+    }
+    #results {
+      display: grid;
+      gap: 0.75rem;
+    }
+    .job-card {
+      background: #fff;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .job-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .job-company {
+      color: #555;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+    }
+    .job-location {
+      color: #777;
+      font-size: 0.85rem;
+      margin-bottom: 0.25rem;
+    }
+    .job-footer {
+      font-size: 0.8rem;
+      color: #777;
+      margin-top: 0.25rem;
+    }
+    .job-link {
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Adzuna Job Search</h1>
+  <p class="subtitle">Simple UI on top of the <code>/search</code> API.</p>
+
+  <form id="search-form">
+    <div>
+      <label for="query">Keyword</label>
+      <input id="query" name="query" placeholder="e.g., devsecops, appsec, remote" />
+    </div>
+    <div>
+      <label for="location">Location</label>
+      <input id="location" name="location" placeholder="e.g., Austin, TX (leave blank for all locations)" />
+    </div>
+    <div>
+      <label for="page">Page</label>
+      <input id="page" name="page" type="number" min="1" value="1" />
+    </div>
+    <div>
+      <label for="per_page">Per page</label>
+      <input id="per_page" name="per_page" type="number" min="1" max="50" value="10" />
+    </div>
+    <div>
+      <button id="search-btn" type="submit" disabled>Search</button>
+    </div>
+  </form>
+
+  <div id="status"></div>
+  <div id="results"></div>
+
+  <script>
+    const form = document.getElementById("search-form");
+    const statusEl = document.getElementById("status");
+    const resultsEl = document.getElementById("results");
+
+    const queryInput = document.getElementById("query");
+const searchButton = document.getElementById("search-btn");
+
+function updateButtonState() {
+  const hasQuery = queryInput.value.trim().length > 0;
+  searchButton.disabled = !hasQuery;
+}
+
+// initialize state on load
+updateButtonState();
+
+// update as user types
+queryInput.addEventListener("input", updateButtonState);
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      statusEl.textContent = "Searching...";
+      resultsEl.innerHTML = "";
+
+      const query = document.getElementById("query").value.trim();
+      const location = document.getElementById("location").value.trim();
+      const page = document.getElementById("page").value || "1";
+      const perPage = document.getElementById("per_page").value || "10";
+
+      const params = new URLSearchParams();
+
+      // FastAPI expects "q"
+      if (query !== "") {
+        params.append("q", query);
+      }
+
+      if (location !== "") {
+        params.append("location", location);
+      }
+
+      params.append("page", page);
+      params.append("per_page", perPage);
+
+
+      try {
+        const response = await fetch(`/search?${params.toString()}`);
+        if (!response.ok) {
+          statusEl.textContent = `Error: ${response.status} ${response.statusText}`;
+          return;
+        }
+        const data = await response.json();
+        statusEl.textContent = `Found ${data.total ?? data.results?.length ?? 0} jobs (page ${page}).`;
+
+        const jobs = data.results || data.jobs || data;
+        if (!Array.isArray(jobs) || jobs.length === 0) {
+          resultsEl.innerHTML = "<p>No results.</p>";
+          return;
+        }
+
+        for (const job of jobs) {
+          const card = document.createElement("div");
+          card.className = "job-card";
+
+          const title = document.createElement("div");
+          title.className = "job-title";
+          title.textContent = job.title ?? "Untitled role";
+
+          const company = document.createElement("div");
+          company.className = "job-company";
+          company.textContent = job.company ?? "";
+
+          const locationDiv = document.createElement("div");
+          locationDiv.className = "job-location";
+          locationDiv.textContent = job.location ?? "";
+
+          const linkDiv = document.createElement("div");
+          linkDiv.className = "job-link";
+          if (job.redirect_url || job.url) {
+            const a = document.createElement("a");
+            a.href = job.redirect_url || job.url;
+            a.target = "_blank";
+            a.rel = "noopener noreferrer";
+            a.textContent = "View job";
+            linkDiv.appendChild(a);
+          }
+
+          const footer = document.createElement("div");
+          footer.className = "job-footer";
+          const salary = job.salary_display || job.salary || "";
+          const source = job.source || "";
+          footer.textContent = [salary, source].filter(Boolean).join(" • ");
+
+          card.appendChild(title);
+          if (company.textContent) card.appendChild(company);
+          if (locationDiv.textContent) card.appendChild(locationDiv);
+          card.appendChild(linkDiv);
+          if (footer.textContent) card.appendChild(footer);
+
+          resultsEl.appendChild(card);
+        }
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = "Unexpected error. Check console.";
+      }
+    });
+  </script>
+</body>
+</html>
